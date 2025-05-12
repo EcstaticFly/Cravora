@@ -10,7 +10,7 @@ export class RegisterDto {
 
   @Field()
   @IsNotEmpty({ message: 'Password is required.' })
-  @MinLength(8, { message: 'Password must be at least 8 characters long.' })
+  @MinLength(6, { message: 'Password must be at least 6 characters long.' })
   password: string;
 
   @Field()
@@ -21,6 +21,17 @@ export class RegisterDto {
   @Field()
   @IsNotEmpty({ message: 'Phone number is required.' })
   phone_number: number;
+}
+
+@InputType()
+export class ActivationDto {
+  @Field()
+  @IsNotEmpty({ message: 'Activation Token is required.' })
+  activationToken: string;
+
+  @Field()
+  @IsNotEmpty({ message: 'Activation Code is required.' })
+  activationCode: string;
 }
 
 @InputType()
