@@ -6,6 +6,7 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { EmailService } from './email/email.service';
+import { TokenSender } from './utils/sendToken';
 
 interface UserData {
   name: string;
@@ -139,9 +140,17 @@ export class UsersService {
     });
 
     if (user && (await this.comparePassword(password, user.password))) {
-      await
+      const tokenSender = new TokenSender(this.configService, this.jwtService);
+      return tokenSender.sendToken(user);
     } else {
-      throw new BadRequestException('Invalid credentials');
+      return {
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+        error: {
+          message: 'Invalid email or password',
+        },
+      };
     }
   }
 
