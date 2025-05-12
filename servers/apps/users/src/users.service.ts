@@ -132,11 +132,25 @@ export class UsersService {
   //login user service
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
-    const user = {
-      email,
-      password,
-    };
-    return user; //temp setup
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (user && (await this.comparePassword(password, user.password))) {
+      await
+    } else {
+      throw new BadRequestException('Invalid credentials');
+    }
+  }
+
+  //compare given password with hashed password
+  async comparePassword(
+    password: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return await bcrypt.compare(password, hashedPassword);
   }
 
   //get all users service
