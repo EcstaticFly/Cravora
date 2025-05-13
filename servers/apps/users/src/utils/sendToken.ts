@@ -14,6 +14,7 @@ export class TokenSender {
       },
       {
         secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
+        expiresIn: '10m',
       },
     );
 
@@ -23,7 +24,7 @@ export class TokenSender {
       },
       {
         secret: this.config.get<string>('REFRESH_TOKEN_SECRET'),
-        expiresIn: this.config.get<string>('REFRESH_TOKEN_EXPIRATION'),
+        expiresIn: '3d',
       },
     );
 
