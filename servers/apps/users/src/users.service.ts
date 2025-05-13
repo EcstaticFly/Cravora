@@ -168,8 +168,23 @@ export class UsersService {
     const refreshToken = req.refreshtoken;
     const accessToken = req.accesstoken;
 
-    console.log({ user, refreshToken, accessToken });
+    // console.log({ user, refreshToken, accessToken });
     return { user, refreshToken, accessToken };
+  }
+
+  //logout user
+  async logout(req: any) {
+    try {
+      req.user = null;
+      req.refreshtoken = null;
+      req.accesstoken = null;
+
+      return {
+        message: 'Logged out successfully',
+      };
+    } catch (error) {
+      throw new BadRequestException('Logout failed');
+    }
   }
 
   //get all users service
