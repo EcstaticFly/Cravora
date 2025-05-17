@@ -8,7 +8,7 @@ import {
 import { Avatar } from "@heroui/avatar";
 import React, { useState } from "react";
 import { CgProfile } from "react-icons/cg";
-import AuthModal from "./AuthModal";
+import AuthScreen from "../screens/AuthScreen";
 
 const ProfileDropdown = () => {
   const [signedIn, setSignedIn] = useState(false);
@@ -59,7 +59,7 @@ const ProfileDropdown = () => {
       )}
       {
         isOpen && (
-          <AuthModal/>
+          <AuthScreen/>
         )
       }
     </div>
