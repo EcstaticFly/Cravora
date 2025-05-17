@@ -11,31 +11,46 @@ import { FcGoogle } from "react-icons/fc";
 import { z } from "zod";
 
 const formSchema = z.object({
+  name: z.string().min(3, "Name must be at least 3 characters long!"),
   email: z.string().email(),
   password: z.string().min(6, "Password must have at least 6 characters!"),
+  phone_number: z
+    .number()
+    .min(10, "Phone number must be at least 10 digits long!"),
 });
 
-type LoginSchema = z.infer<typeof formSchema>;
+type RegisterSchema = z.infer<typeof formSchema>;
 
-const Login = ({ setActiveState }: { setActiveState: (e: string) => void }) => {
+const Register = ({
+  setActiveState,
+}: {
+  setActiveState: (e: string) => void;
+}) => {
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<LoginSchema>({
+  } = useForm<RegisterSchema>({
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: LoginSchema) => {
+  const onSubmit = (data: RegisterSchema) => {
     console.log(data);
     reset();
   };
   return (
     <div>
-      <h1 className={`${styles.title}`}>Login with Cravora</h1>
+      <h1 className={`${styles.title}`}>Register with Cravora</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
+        <label className={`${styles.label}`}>Enter your Name</label>
+        <input
+          {...register("name")}
+          type="text"
+          placeholder="John Doe"
+          className={`${styles.input}`}
+        />
         <label className={`${styles.label}`}>Enter your Email</label>
         <input
           {...register("email")}
@@ -111,4 +126,4 @@ const Login = ({ setActiveState }: { setActiveState: (e: string) => void }) => {
   );
 };
 
-export default Login;
+export default Register;
