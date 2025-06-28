@@ -55,13 +55,12 @@ const ProfileDropdown = () => {
           </DropdownMenu>
         </Dropdown>
       ) : (
-        <CgProfile className="size-8 cursor-pointer" onClick={() => setIsOpen(!isOpen)}/>
+        <CgProfile
+          className="size-8 cursor-pointer"
+          onClick={() => setIsOpen(!isOpen)}
+        />
       )}
-      {
-        isOpen && (
-          <AuthScreen/>
-        )
-      }
+      {isOpen && <AuthScreen />}
     </div>
   );
 };

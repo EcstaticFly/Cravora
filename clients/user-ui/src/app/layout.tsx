@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers/HeroUIProvider";
+import { Toaster } from "react-hot-toast";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
     <html lang="en" className="dark" suppressHydrationWarning>
       <body suppressHydrationWarning className={`${poppins.variable}`}>
         <Providers>{children}</Providers>
+        <Toaster position="top-center" reverseOrder={false} />
       </body>
     </html>
   );

@@ -58,9 +58,6 @@ const Login = ({ setActiveState }: { setActiveState: (e: string) => void }) => {
             placeholder="example@123"
             className={`${styles.input}`}
           />
-          {errors.password && (
-            <span className="text-red-500">{`${errors.password.message}`}</span>
-          )}
           {!showPassword ? (
             <AiOutlineEyeInvisible
               className="absolute bottom-2.5 right-3 z-1 cursor-pointer"
@@ -75,6 +72,9 @@ const Login = ({ setActiveState }: { setActiveState: (e: string) => void }) => {
             />
           )}
         </div>
+        {errors.password && (
+            <span className="text-red-500">{`${errors.password.message}`}</span>
+          )}
         <div className="w-full mt-5">
           <span
             className={`${styles.label} !text-[#2190ff] hover:underline block text-right cursor-pointer`}

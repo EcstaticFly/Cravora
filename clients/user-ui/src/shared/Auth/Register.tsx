@@ -1,7 +1,10 @@
+import REGISTER_USER from "@/src/graphql/actions/register.action";
 import styles from "@/src/utils/style";
+import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast, { LoaderIcon } from "react-hot-toast";
 import {
   AiFillGithub,
   AiOutlineEye,
@@ -26,6 +29,7 @@ const Register = ({
 }: {
   setActiveState: (e: string) => void;
 }) => {
+  const [registerUserMutation, { loading }] = useMutation(REGISTER_USER);
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
@@ -36,21 +40,38 @@ const Register = ({
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: RegisterSchema) => {
-    console.log(data);
-    reset();
+  const onSubmit = async (data: RegisterSchema) => {
+    try {
+      const response = await registerUserMutation({
+        variables: data,
+      });
+      console.log("Registration response:", response.data);
+      localStorage.setItem("activation_token", response.data.activation_token);
+      toast.success("OTP sent to your email. Please verify to continue");
+      reset();
+      // setActiveState("login");
+    } catch (error: any) {
+      console.error("Error during registration:", error);
+      toast.error(error.message || "Registration failed. Please try again.");
+    }
   };
   return (
     <div>
       <h1 className={`${styles.title}`}>Register with Cravora</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label className={`${styles.label}`}>Enter your Name</label>
-        <input
-          {...register("name")}
-          type="text"
-          placeholder="John Doe"
-          className={`${styles.input}`}
-        />
+        <div className="w-full relative mb-3">
+          <label className={`${styles.label}`}>Enter your Name</label>
+          <input
+            {...register("name")}
+            type="text"
+            placeholder="John Doe"
+            className={`${styles.input}`}
+          />
+          {errors.name && (
+            <span className="text-red-500 mt-1">{`${errors.name.message}`}</span>
+          )}
+        </div>
+
         <label className={`${styles.label}`}>Enter your Email</label>
         <input
           {...register("email")}
@@ -63,6 +84,18 @@ const Register = ({
             {`${errors.email.message}`}
           </span>
         )}
+        <div className="w-full relative mt-3">
+          <label className={`${styles.label}`}>Enter your Phone Number</label>
+          <input
+            {...register("phone_number", { valueAsNumber: true })}
+            type="number"
+            placeholder="123*******"
+            className={`${styles.input}`}
+          />
+          {errors.phone_number && (
+            <span className="text-red-500 block mt-1">{`${errors.phone_number.message}`}</span>
+          )}
+        </div>
         <div className="w-full mt-5 relative mb-1">
           <label htmlFor="password" className={`${styles.label}`}>
             Enter your Password
@@ -73,9 +106,6 @@ const Register = ({
             placeholder="example@123"
             className={`${styles.input}`}
           />
-          {errors.password && (
-            <span className="text-red-500">{`${errors.password.message}`}</span>
-          )}
           {!showPassword ? (
             <AiOutlineEyeInvisible
               className="absolute bottom-2.5 right-3 z-1 cursor-pointer"
@@ -90,16 +120,14 @@ const Register = ({
             />
           )}
         </div>
+        {errors.password && (
+          <span className="text-red-500 mt-1">{`${errors.password.message}`}</span>
+        )}
         <div className="w-full mt-5">
-          <span
-            className={`${styles.label} !text-[#2190ff] hover:underline block text-right cursor-pointer`}
-          >
-            Forgot your Password?
-          </span>
           <input
             type="submit"
-            value="Login"
-            disabled={isSubmitting}
+            value={`${loading ? `Sending OTP...` : "Register"}`}
+            disabled={isSubmitting || loading}
             className={`${styles.button} mt-3`}
           />
         </div>
@@ -112,12 +140,12 @@ const Register = ({
           <AiFillGithub className="cursor-pointer ml-2" size={30} />
         </div>
         <h5 className="text-center pt-4 font-Poppins text-[14px]">
-          Don't have an account?
+          Already have an account?
           <span
             className="text-[#2190ff] pl-1 hover:underline cursor-pointer"
-            onClick={() => setActiveState("register")}
+            onClick={() => setActiveState("login")}
           >
-            Register
+            Login
           </span>
         </h5>
         <br />
