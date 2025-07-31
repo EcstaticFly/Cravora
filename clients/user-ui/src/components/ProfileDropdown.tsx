@@ -6,13 +6,32 @@ import {
   DropdownTrigger,
 } from "@heroui/dropdown";
 import { Avatar } from "@heroui/avatar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import AuthScreen from "../screens/AuthScreen";
+import useUser from "../hooks/useUser";
+import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 const ProfileDropdown = () => {
   const [signedIn, setSignedIn] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { user, loading } = useUser();
+
+  useEffect(() => {
+    if (!loading) {
+      setSignedIn(!!user);
+    }
+  }, [loading, user]);
+
+  const handleLogout = () => {
+    Cookies.remove("access_token");
+    Cookies.remove("refresh_token");
+    toast.success("Logout successful!");
+    setTimeout(() => {
+      window.location.reload();
+    }, 1200);
+  };
 
   return (
     <div className="flex">
@@ -22,7 +41,7 @@ const ProfileDropdown = () => {
             <Avatar
               as="button"
               className="transition-transform size-8 cursor-pointer overflow-hidden !rounded-full"
-              src="https://avatars.githubusercontent.com/u/165584415?v=4"
+              src={user?.avatar?.url}
             />
           </DropdownTrigger>
           <DropdownMenu
@@ -35,7 +54,7 @@ const ProfileDropdown = () => {
               className="h-14 gap-1 flex flex-col items-start"
             >
               <p className="text-sm text-gray-400">Signed in as</p>
-              <p className="font-semibold text-sm">support@cravora.com</p>
+              <p className="font-semibold text-sm">{user?.email}</p>
             </DropdownItem>
             <DropdownItem key="settings" className=" rounded-md px-2 py-2">
               My Profile
@@ -49,6 +68,7 @@ const ProfileDropdown = () => {
             <DropdownItem
               key="logout"
               className="hover:bg-red-200 text-red-600 rounded-md px-2 py-2"
+              onClick={handleLogout}
             >
               Logout
             </DropdownItem>
@@ -60,7 +80,7 @@ const ProfileDropdown = () => {
           onClick={() => setIsOpen(!isOpen)}
         />
       )}
-      {isOpen && <AuthScreen />}
+      {isOpen && <AuthScreen setIsOpen={setIsOpen} />}
     </div>
   );
 };

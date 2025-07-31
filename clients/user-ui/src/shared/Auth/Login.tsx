@@ -1,7 +1,10 @@
+import { LOGIN_USER } from "@/src/graphql/actions/login.actions";
 import styles from "@/src/utils/style";
+import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import {
   AiFillGithub,
   AiOutlineEye,
@@ -9,6 +12,7 @@ import {
 } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { z } from "zod";
+import Cookies from "js-cookie";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -17,7 +21,14 @@ const formSchema = z.object({
 
 type LoginSchema = z.infer<typeof formSchema>;
 
-const Login = ({ setActiveState }: { setActiveState: (e: string) => void }) => {
+const Login = ({
+  setActiveState,
+  setIsOpen,
+}: {
+  setActiveState: (e: string) => void;
+  setIsOpen: (e: boolean) => void;
+}) => {
+  const [LoginUser, { loading }] = useMutation(LOGIN_USER);
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
@@ -28,9 +39,32 @@ const Login = ({ setActiveState }: { setActiveState: (e: string) => void }) => {
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: LoginSchema) => {
-    console.log(data);
-    reset();
+  const onSubmit = async (data: LoginSchema) => {
+    const loginData = {
+      email: data.email,
+      password: data.password,
+    };
+    try {
+      const response = await LoginUser({
+        variables: loginData,
+      });
+
+      if (response.data.Login.user) {
+        toast.success("Login Successful!");
+        Cookies.set("refresh_token", response.data.Login.refreshToken);
+        Cookies.set("access_token", response.data.Login.accessToken);
+        setIsOpen(false);
+        reset();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200);
+      } else {
+        throw new Error(response.data.Login.error.message);
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || "An unknown error occured");
+    }
   };
   return (
     <div>
@@ -73,8 +107,8 @@ const Login = ({ setActiveState }: { setActiveState: (e: string) => void }) => {
           )}
         </div>
         {errors.password && (
-            <span className="text-red-500">{`${errors.password.message}`}</span>
-          )}
+          <span className="text-red-500">{`${errors.password.message}`}</span>
+        )}
         <div className="w-full mt-5">
           <span
             className={`${styles.label} !text-[#2190ff] hover:underline block text-right cursor-pointer`}
@@ -84,7 +118,7 @@ const Login = ({ setActiveState }: { setActiveState: (e: string) => void }) => {
           <input
             type="submit"
             value="Login"
-            disabled={isSubmitting}
+            disabled={isSubmitting || loading}
             className={`${styles.button} mt-3`}
           />
         </div>
