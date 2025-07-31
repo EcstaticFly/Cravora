@@ -1,4 +1,4 @@
-import REGISTER_USER from "@/src/graphql/actions/register.action";
+import { REGISTER_USER } from "@/src/graphql/actions/register.action";
 import styles from "@/src/utils/style";
 import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -46,10 +46,10 @@ const Register = ({
         variables: data,
       });
       console.log("Registration response:", response.data);
-      localStorage.setItem("activation_token", response.data.activation_token);
+      localStorage.setItem("activation_token", response.data.register.activation_token);
       toast.success("OTP sent to your email. Please verify to continue");
       reset();
-      // setActiveState("login");
+      setActiveState("verification");
     } catch (error: any) {
       console.error("Error during registration:", error);
       toast.error(error.message || "Registration failed. Please try again.");

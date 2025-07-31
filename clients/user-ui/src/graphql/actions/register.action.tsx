@@ -2,7 +2,7 @@
 
 import { gql, DocumentNode } from "@apollo/client";
 
-const REGISTER_USER: DocumentNode = gql`
+export const REGISTER_USER: DocumentNode = gql`
   mutation RegisterUser(
     $name: String!
     $email: String!
@@ -21,4 +21,3 @@ const REGISTER_USER: DocumentNode = gql`
     }
   }
 `;
-export default REGISTER_USER;
