@@ -63,7 +63,7 @@ export class AuthGuard implements CanActivate {
           const user = await this.prisma.user.findUnique({
             where: { id: decodedRefreshToken.id },
           });
-          if (!user) throw new Error(); 
+          if (!user) throw new Error();
 
           const newRefreshToken = this.jwtService.sign(
             { id: user.id },
@@ -84,6 +84,8 @@ export class AuthGuard implements CanActivate {
           res.setHeader('x-new-accesstoken', newAccessToken);
           res.setHeader('x-new-refreshtoken', newRefreshToken);
 
+          req.accesstoken = newAccessToken;
+          req.refreshtoken = newRefreshToken;
           req.user = user;
         } catch (refreshError) {
           throw new UnauthorizedException(
