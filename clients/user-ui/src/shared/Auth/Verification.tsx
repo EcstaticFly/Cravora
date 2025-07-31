@@ -52,6 +52,7 @@ const Verification: FC<Props> = ({ setActiveState }) => {
         await ActivateUser({
           variables: data,
         });
+        localStorage.removeItem("activation_token");
         toast.success("Account activated successflly");
         setActiveState("login");
       } catch (error: any) {

@@ -4,10 +4,10 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../../../../prisma/prisma.service';
+import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { PrismaService } from '../../../../prisma/prisma.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -19,71 +19,82 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
-    const { req } = gqlContext.getContext();
+    const { req, res } = gqlContext.getContext();
 
     const accessToken = req.headers.accesstoken as string;
     const refreshToken = req.headers.refreshtoken as string;
 
-    if (!accessToken || !refreshToken) {
-      throw new UnauthorizedException('Please login to access this resource');
+    if (
+      !accessToken ||
+      !refreshToken ||
+      accessToken === 'undefined' ||
+      accessToken === undefined ||
+      accessToken === 'null' ||
+      accessToken === null ||
+      accessToken === '' ||
+      refreshToken === 'undefined' ||
+      refreshToken === undefined ||
+      refreshToken === 'null' ||
+      refreshToken === null ||
+      refreshToken === ''
+    ) {
+      throw new UnauthorizedException('Authentication tokens are missing.');
     }
 
-    if (accessToken) {
-      const decodedAccessToken = await this.jwtService.verify(accessToken, {
+    try {
+      const decodedAccessToken = this.jwtService.verify(accessToken, {
         secret: this.configService.get('ACCESS_TOKEN_SECRET'),
       });
 
-      if (!decodedAccessToken) {
-        throw new UnauthorizedException('Invalid access token');
-      }
-
-      await this.updateAccessToken(req);
-    }
-    return true;
-  }
-
-  private async updateAccessToken(req: any): Promise<void> {
-    try {
-      const refreshTokenData = req.headers.refreshtoken as string;
-      const decodedRefreshToken = await this.jwtService.verify(
-        refreshTokenData,
-        {
-          secret: this.configService.get('REFRESH_TOKEN_SECRET'),
-        },
-      );
-
-      if (!decodedRefreshToken) {
-        throw new UnauthorizedException('Invalid refresh token');
-      }
-
       const user = await this.prisma.user.findUnique({
-        where: {
-          id: decodedRefreshToken.id,
-        },
+        where: { id: decodedAccessToken.id },
       });
-
-      const accessToken = this.jwtService.sign(
-        { id: user?.id },
-        {
-          secret: this.configService.get('ACCESS_TOKEN_SECRET'),
-          expiresIn: '30m',
-        },
-      );
-
-      const refreshToken = this.jwtService.sign(
-        { id: user?.id },
-        {
-          secret: this.configService.get('REFRESH_TOKEN_SECRET'),
-          expiresIn: '3d',
-        },
-      );
-
-      req.accesstoken = accessToken;
-      req.refreshtoken = refreshToken;
+      if (!user) {
+        throw new UnauthorizedException('User not found.');
+      }
       req.user = user;
     } catch (error) {
-      console.error('Error updating access token:', error);
-      throw new UnauthorizedException(error.message);
+      if (error instanceof TokenExpiredError) {
+        try {
+          const decodedRefreshToken = this.jwtService.verify(refreshToken, {
+            secret: this.configService.get('REFRESH_TOKEN_SECRET'),
+          });
+
+          const user = await this.prisma.user.findUnique({
+            where: { id: decodedRefreshToken.id },
+          });
+          if (!user) throw new Error(); 
+
+          const newRefreshToken = this.jwtService.sign(
+            { id: user.id },
+            {
+              secret: this.configService.get('REFRESH_TOKEN_SECRET'),
+              expiresIn: '7d',
+            },
+          );
+
+          const newAccessToken = this.jwtService.sign(
+            { id: user.id },
+            {
+              secret: this.configService.get('ACCESS_TOKEN_SECRET'),
+              expiresIn: '5m',
+            },
+          );
+
+          res.setHeader('x-new-accesstoken', newAccessToken);
+          res.setHeader('x-new-refreshtoken', newRefreshToken);
+
+          req.user = user;
+        } catch (refreshError) {
+          throw new UnauthorizedException(
+            'Session expired. Please log in again.',
+          );
+        }
+      } else {
+        throw new UnauthorizedException('Invalid access token.');
+      }
     }
+
+    return true;
   }
 }
