@@ -38,7 +38,7 @@ export class AuthGuard implements CanActivate {
       refreshToken === null ||
       refreshToken === ''
     ) {
-      throw new UnauthorizedException('Authentication tokens are missing.');
+      throw new UnauthorizedException('Please login to access this resource.');
     }
 
     try {
