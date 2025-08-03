@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Login from "../shared/Auth/Login";
 import Register from "../shared/Auth/Register";
 import Verification from "../shared/Auth/Verification";
+import ForgotPassword from "../shared/Auth/ForgotPassword";
 
 const AuthScreen = ({ setIsOpen }: { setIsOpen: (e: boolean) => void }) => {
   const [activeState, setActiveState] = useState("login");
@@ -25,6 +26,9 @@ const AuthScreen = ({ setIsOpen }: { setIsOpen: (e: boolean) => void }) => {
         )}
         {activeState === "verification" && (
           <Verification setActiveState={setActiveState} />
+        )}
+        {activeState === "forgot-password" && (
+          <ForgotPassword setActiveState={setActiveState}/>
         )}
       </div>
     </div>

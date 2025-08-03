@@ -112,6 +112,7 @@ const Login = ({
         <div className="w-full mt-5">
           <span
             className={`${styles.label} !text-[#2190ff] hover:underline block text-right cursor-pointer`}
+            onClick={() => setActiveState("forgot-password")}
           >
             Forgot your Password?
           </span>
