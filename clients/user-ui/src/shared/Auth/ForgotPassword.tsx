@@ -59,10 +59,9 @@ const ForgotPassword = ({
           </span>
         )}
         <br />
-        <br />
         <input
           type="submit"
-          value="Submit"
+          value={loading ? "Sending OTP..." : "Submit"}
           disabled={isSubmitting || loading}
           className={`${styles.button} mt-3`}
         />
