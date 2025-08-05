@@ -211,13 +211,15 @@ export class UsersService {
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
     const { password, activationToken } = resetPasswordDto;
 
-    if(password.length < 6){
-      throw new BadRequestException('Password must be at least 6 characters long');
+    if (password.length < 6) {
+      throw new BadRequestException(
+        'Password must be at least 6 characters long',
+      );
     }
 
     const decoded = await this.jwtService.decode(activationToken);
 
-    if (!decoded) {
+    if (!decoded || decoded?.exp * 1000 < Date.now()) {
       throw new UnauthorizedException('Invalid activation token');
     }
 
