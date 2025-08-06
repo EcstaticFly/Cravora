@@ -2,14 +2,11 @@ import { REGISTER_USER } from "@/src/graphql/actions/register.action";
 import styles from "@/src/utils/style";
 import { useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import toast, { LoaderIcon } from "react-hot-toast";
-import {
-  AiFillGithub,
-  AiOutlineEye,
-  AiOutlineEyeInvisible,
-} from "react-icons/ai";
+import toast from "react-hot-toast";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { z } from "zod";
 
@@ -46,7 +43,10 @@ const Register = ({
         variables: data,
       });
       console.log("Registration response:", response.data);
-      localStorage.setItem("activation_token", response.data.register.activation_token);
+      localStorage.setItem(
+        "activation_token",
+        response.data.register.activation_token
+      );
       toast.success("OTP sent to your email. Please verify to continue");
       reset();
       setActiveState("verification");
@@ -135,9 +135,11 @@ const Register = ({
         <h5 className="text-center pt-4 font-Poppins text-[14px] text-white">
           Or join with
         </h5>
-        <div className="flex items-center justify-center my-3">
+        <div
+          className="flex items-center justify-center my-3"
+          onClick={() => signIn()}
+        >
           <FcGoogle className="cursor-pointer mr-2" size={30} />
-          <AiFillGithub className="cursor-pointer ml-2" size={30} />
         </div>
         <h5 className="text-center pt-4 font-Poppins text-[14px]">
           Already have an account?

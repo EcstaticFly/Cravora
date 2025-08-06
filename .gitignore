@@ -194,3 +194,5 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Ignore Prisma Client output
 servers/generated/prisma/
+/clients/user-ui/generated/prisma/
+*.dll.node
