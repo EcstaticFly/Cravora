@@ -196,3 +196,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 servers/generated/prisma/
 /clients/user-ui/generated/prisma/
 *.dll.node
+
+# nx cache
+.nx
