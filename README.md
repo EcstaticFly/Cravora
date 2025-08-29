@@ -1,98 +1,145 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🍽️ Cravora – Food Delivery Platform
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Cravora is a **food delivery website** that allows users to create an account, browse and order food from various restaurants. It's built with a **microservice architecture** to ensure the application is scalable, secure, and easy to maintain.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+🔗 **Source Code:** [GitHub](https://github.com/EcstaticFly/Cravora.git)
 
-## Description
+## ✨ Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+* **User Authentication**: Secure sign-up and login via **email/password** or **Google OAuth**.
+* **Microservice Architecture**: The application is divided into three distinct services:
+    * `api-users`: Manages all user-related functions.
+    * `api-restuarants`: Handles all restaurant and food-related data.
+    * `api-gateway`: Acts as a single entry point for all client requests.
+* **GraphQL API**: Utilizes GraphQL for efficient data fetching, allowing clients to request exactly what they need.
+* **Email Communication**: Built-in functionality for account activation and password resets with customizable email templates using **EJS**.
+* **Restaurant Dashboard**: A dedicated frontend for restaurants to manage their food items and view orders.
+* **Data Validation**: Enforces data integrity with **Zod** schema validation.
 
-## Project setup
+---
 
-```bash
-$ npm install
-```
+## 🛠 Tech Stack
 
-## Compile and run the project
+### Monorepo Tool
 
-```bash
-# development
-$ npm run start
+* **Nx**: Used for managing the monorepo, providing a unified build and test system.
 
-# watch mode
-$ npm run start:dev
+### Backend
 
-# production mode
-$ npm run start:prod
-```
+* **Architecture**: Microservices with **NestJS**
+* **Language**: **TypeScript**
+* **Database**: **MongoDB**
+* **ORM**: **Prisma**
+* **API**: **GraphQL**
+* **Validation**: **Zod**
+* **Email Templates**: **EJS**
+* **Cloudinary**: For media management and image uploads in the restaurant service.
 
-## Run tests
+### Frontend
 
-```bash
-# unit tests
-$ npm run test
+* **Framework**: **Next.js**
+* **Styling**: **Tailwind CSS**, **Next UI**
+* **Authentication**: **NextAuth.js** (for Google OAuth)
+* **Charting**: **Recharts** (inferred from file names like `invoice.charts.tsx` and `revenue.chart.tsx`)
 
-# e2e tests
-$ npm run test:e2e
+---
 
-# test coverage
-$ npm run test:cov
-```
+## 🚀 Installation & Setup
 
-## Deployment
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/EcstaticFly/Cravora.git](https://github.com/EcstaticFly/Cravora.git)
+    cd Cravora
+    ```
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+3.  **Configure Environment Variables:**
+    Create a `.env` file in each of the following directories with the specified variables.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+    **For `apps/api-users`:**
+    ```env
+    DATABASE_URL=
+    ACTIVATION_SECRET=
+    SMTP_HOST=
+    SMTP_PORT=
+    SMTP_SERVICE=
+    SMTP_MAIL=
+    SMTP_PASSWORD=
+    ACCESS_TOKEN_SECRET=
+    REFRESH_TOKEN_SECRET=
+    FORGOT_PASSWORD_SECRET=
+    CLIENT_SIDE_URI=
+    ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+    **For `apps/api-restuarants`:**
+    ```env
+    CLOUD_NAME=
+    CLOUD_API_KEY=
+    CLOUD_API_SECRET=
+    JWT_SECRET_KEY=
+    DATABASE_URL=
+    SMTP_HOST=
+    SMTP_PORT=
+    SMTP_SERVICE=
+    SMTP_MAIL=
+    SMTP_PASSWORD=
+    ACCESS_TOKEN_SECRET=
+    REFRESH_TOKEN_SECRET=
+    FORGOT_PASSWORD_SECRET=
+    CLIENT_SIDE_URI=
+    ```
 
-## Resources
+    **For `apps/client`:**
+    ```env
+    NEXT_PUBLIC_SERVER_URI=
+    DATABASE_URL=
+    GOOGLE_CLIENT_ID=
+    GOOGLE_CLIENT_SECRET=
+    NEXT_AUTH_SECRET=
+    ```
 
-Check out a few resources that may come in handy when working with NestJS:
+    **For `apps/restuarant-dashboard`:**
+    ```env
+    NEXT_PUBLIC_SERVER_URI=
+    ```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+4.  **Run the application:**
+    Use `nx` commands to run the microservices and clients.
+    ```bash
+    # To run the API Gateway
+    nx serve api-gateway
 
-## Support
+    # To run the Users microservice
+    nx serve api-users
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+    # To run the Restaurants microservice
+    nx serve api-restuarants
 
-## Stay in touch
+    # To run the main client application
+    nx dev client
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+    # To run the restaurant dashboard
+    nx dev restuarant-dashboard
+    ```
 
-## License
+---
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! Feel free to **fork** the repository and submit a **pull request**.
+
+---
+
+## 📜 License
+
+This project is licensed under the **GNU GENERAL PUBLIC LICENSE v3**.
+
+---
+
+## 📬 Contact
+
+For inquiries, reach out to me at [Suyash Pandey](mailto:suyash.2023ug1100@iiitranchi.ac.in).
